@@ -5,24 +5,29 @@ let questionContainer = document.querySelector('.questions-container');
 let initialContainer = document.querySelector('.initial-container');
 let askQuestion = document.querySelector('.askquestion');
 let choices = document.querySelectorAll('.choices');
-let answer1 = document.querySelector(".answer1");
-      answer1.addEventListener('click', checkAnswer);
-let answer2 = document.querySelector(".answer2");
-      answer2.addEventListener('click', checkAnswer);
-let answer3 = document.querySelector(".answer3");
-      answer3.addEventListener('click', checkAnswer);
+let answer1 = document.querySelector(".answer1");     
+let answer2 = document.querySelector(".answer2");     
+let answer3 = document.querySelector(".answer3");      
 let answer4 = document.querySelector(".answer4");
-      answer4.addEventListener('click', checkAnswer);
 let highScoresContainer = document.querySelector('.highscores-container');
+let highScoreSubmit = document.querySelector('.submit-button')
 var questions;
 let c = 0;
 let quizStarted = false;
 let secondsLeft = 75;
 let currentScore = 0;
 let highScores = [];
+  if (localStorage.getItem("highScores")) {
+  highScores = JSON.parse(localStorage.getItem("highScores"));
+}
+
 let count = localStorage.getItem("currentScore");
 let highScoresHeader = document.querySelector('.highscores-header');
-let showScores = document.querySelector('.showScores')
+let showScores = document.querySelector('.showScores');
+let inputInitials = document.querySelector('#name');
+let highScoreList = document.querySelector(".highscore-list");
+let highScoresForm = document.querySelector(".highscoresform")
+
 
 function startGame() {
   initialContainer.setAttribute("style", "display:none;");
@@ -30,6 +35,8 @@ function startGame() {
   timer.setAttribute("style", "display:block")
   questionContainer.setAttribute("style", "display:block");
   showScores.setAttribute("style", "display:block")
+  highScoresContainer.setAttribute("style", "display:none");
+  highScoresForm.setAttribute("style", "display:none")
   setTime();
   questions();
   loadQuizQuestions();
@@ -115,19 +122,54 @@ function endQuiz() {
   timer.setAttribute("style", "display:none")
   questionContainer.setAttribute("style", "display:none");
   localStorage.setItem("yourScore", currentScore);
-  highScoresContainer.setAttribute("style", "display:block");
+  highScoresForm.setAttribute("style", "display:block");
   highScoresHeader.textContent = `Your score is ${currentScore}. Enter your initials to add your high score.`
 }
 
 function viewScore() {
+  
+  initialContainer.setAttribute("style", "display:none;");
+  highScoresForm.setAttribute("style", "display:none");
+  highScoresContainer.setAttribute("style", "display:block");
   highScoresHeader.textContent = `Your score is ${currentScore}. Here are the high scores:`
-  timerSelect.setAttribute("style", "display:none");
-  timer.setAttribute("style", "display:none")
+  highScoreSubmit.setAttribute("style", "display:none");
+  timer.setAttribute("style", "display:none");
   questionContainer.setAttribute("style", "display:none");
+  highScoreList.innerHTML = "";
+  let listContainer = document.createElement("ul");
+  for (i=0; i < highScores.length; i++) {
+    let listItem = document.createElement("li");
+    listItem.textContent = `${highScores[i].name}: Score | ${highScores[i].score}`;
+    listContainer.appendChild(listItem);
+  }
+  highScoreList.appendChild(listContainer);
+
 }
 
-showScores.addEventListener("click", function(e) {
-  console.log(showScores)
-  viewScore();
-})
 
+function submitHighScore(e) {
+  e.preventDefault();
+  let userName = inputInitials.value;
+  const userData = {name: userName, score: currentScore};
+  console.log(userData);
+  highScores.push(userData);
+  localStorage.setItem('highScores', JSON.stringify(highScores));
+  viewScore();
+}
+
+// Event Listeners
+
+
+// Listens when an answer is clicked
+
+answer1.addEventListener('click', checkAnswer);
+
+answer2.addEventListener('click', checkAnswer);
+
+answer3.addEventListener('click', checkAnswer);
+
+answer4.addEventListener('click', checkAnswer);
+
+highScoreSubmit.addEventListener("click", submitHighScore);
+
+showScores.addEventListener("click", viewScore)
