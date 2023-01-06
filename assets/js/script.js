@@ -30,6 +30,8 @@ let highScoresForm = document.querySelector(".highscoresform")
 
 
 function startGame() {
+
+  // First part of quiz start hides the initial section, shows the timer section, and hides high score section.
   initialContainer.setAttribute("style", "display:none;");
   timerSelect.setAttribute("style", "display:inline");
   timer.setAttribute("style", "display:block")
@@ -37,6 +39,9 @@ function startGame() {
   showScores.setAttribute("style", "display:block")
   highScoresContainer.setAttribute("style", "display:none");
   highScoresForm.setAttribute("style", "display:none")
+
+  // calls functions to set the time, loads in the question list, and load the questions on the screen.
+
   setTime();
   questions();
   loadQuizQuestions();
@@ -44,6 +49,7 @@ function startGame() {
 
 function loadQuizQuestions() {
  
+// Shows the first question. C will be incremented within the checkAnswer function to move to the next question. If there are no more questions, sends you to endQuiz function.
 
  if (c < questions.length) {
   askQuestion.textContent = questions[c].question;
@@ -60,21 +66,22 @@ function loadQuizQuestions() {
 }
 
 function checkAnswer(event) {
-  //Selects the button you clicked //
-var answer = event.target.textContent;
-if (answer === questions[c].correctAnswer) {
-  currentScore++;
-  console.log(currentScore);
-  localStorage.setItem("count", currentScore);
+  
+var answer = event.target.textContent; //Selects the button you clicked //
+if (answer === questions[c].correctAnswer) {  // Verifies if correct answer was selected
+  currentScore++; // adds to your score
+  localStorage.setItem("count", currentScore); //updates local storage with current score
 } else {
-  secondsLeft = secondsLeft - 5;
+  secondsLeft = secondsLeft - 5;  //Removecs 5 seconds for wrong answer.
   localStorage.setItem("count", currentScore);
   console.log(count);
 }
-//move to next question
-c++
+
+c++    //move to next question
 loadQuizQuestions();
 }
+
+// This function shows a timer on the page when the questions load.
 
 function setTime () {
  var countDown = setInterval(function() {
@@ -116,6 +123,7 @@ function questions() {
   
   ]
 }
+// This function shows the input score screen, and saves score to local storage.
 
 function endQuiz() {
   timerSelect.setAttribute("style", "display:none");
@@ -135,9 +143,10 @@ function viewScore() {
   highScoreSubmit.setAttribute("style", "display:none");
   timer.setAttribute("style", "display:none");
   questionContainer.setAttribute("style", "display:none");
-  highScoreList.innerHTML = "";
+  highScoreList.innerHTML = ""; // clears high score list
   let listContainer = document.createElement("ul");
-  for (i=0; i < highScores.length; i++) {
+  //Each number of high scores it creates a list item within the listContainer and adds the high score to page. //
+  for (i=0; i < highScores.length; i++) { 
     let listItem = document.createElement("li");
     listItem.textContent = `${highScores[i].name}: Score | ${highScores[i].score}`;
     listContainer.appendChild(listItem);
@@ -146,6 +155,7 @@ function viewScore() {
 
 }
 
+//Function submits your high score to local storage, and stores data entered by user into a variable. Prevents the page from reloading when submit button is clicked.
 
 function submitHighScore(e) {
   e.preventDefault();
